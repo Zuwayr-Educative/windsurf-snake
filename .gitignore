@@ -40,24 +40,14 @@ yarn-error.log*
 ehthumbs.db
 Thumbs.db
 
-# Testing
+# Testing output
 /coverage
 /__tests__/__snapshots__
-*.test.js
-*.spec.js
-*.test.ts
-*.spec.ts
-/__mocks__
+/__mocks__/__snapshots__
 /test-results
-/jest.config.js
-/vitest.config.*
-/cypress/
-/cypress.config.*
 /cypress/videos/
 /cypress/screenshots/
 /playwright-report/
-/test-results/
-/coverage/
 .nyc_output/
 /__tests__/coverage/
 

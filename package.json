@@ -5,6 +5,7 @@
   "main": "game.js",
   "type": "commonjs",
   "scripts": {
+    "dev": "live-server --watch=*.{js,html,css} --open=index.html",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -16,7 +17,9 @@
       "^\\.(css|less|scss|sass)$": "identity-obj-proxy"
     },
     "testEnvironment": "jsdom",
-    "setupFilesAfterEnv": ["<rootDir>/setupTests.js"]
+    "setupFilesAfterEnv": [
+      "<rootDir>/setupTests.js"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -26,6 +29,7 @@
     "babel-jest": "^30.0.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.0.4",
-    "jest-environment-jsdom": "^30.0.4"
+    "jest-environment-jsdom": "^30.0.4",
+    "live-server": "^1.2.2"
   }
 }

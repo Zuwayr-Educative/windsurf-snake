@@ -1,0 +1,39 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build (if needed)
+        run: |
+          if [ -f "package.json" ] && grep -q "build" package.json; then
+            npm run build
+          fi
+      
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: .  # The folder the action should deploy (current directory)
+          branch: gh-pages  # The branch the action should deploy to
+          clean: true  # Automatically remove deleted files from the deploy branch
+          single-commit: true  # Maintain a clean git history
+          commit-message: 'Deploy to GitHub Pages'

@@ -40,7 +40,7 @@ describe('Game State Management', () => {
     test('should load high score from localStorage', () => {
         localStorage.setItem('snakeHighScore', '100');
         gameState.highScore = parseInt(localStorage.getItem('snakeHighScore')) || 0;
-        expect(gameState.highScore).toBe(100);
+        expect(gameState.highScore).toBe(255);
     });
 
     test('should handle missing high score in localStorage', () => {

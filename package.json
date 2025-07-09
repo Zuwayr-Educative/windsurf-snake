@@ -9,7 +9,7 @@
     "dev": "live-server --watch=*.{js,html,css} --open=index.html",
     "test": "jest",
     "test:watch": "jest --watch",
-    "build": "cp -r *.js *.html *.css sounds/ dist/"
+    "build": "mkdir -p dist && cp -r *.js *.html sounds/ dist/"
   },
   "jest": {
     "transform": {

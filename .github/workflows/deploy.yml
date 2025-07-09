@@ -32,7 +32,14 @@ jobs:
       - name: Build project
         run: |
           mkdir -p dist
-          npm run build
+          # Copy individual files and directories that exist
+          [ -f "*.js" ] && cp *.js dist/ || true
+          [ -f "*.html" ] && cp *.html dist/ || true
+          [ -d "sounds" ] && cp -r sounds/ dist/ || true
+          
+          # Verify files were copied
+          echo "Files in dist/:"
+          ls -la dist/
           
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

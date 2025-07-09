@@ -1,13 +1,15 @@
 {
   "name": "windsurfing",
   "version": "1.0.0",
-  "description": "",
+  "description": "A 3D Snake Game",
   "main": "game.js",
   "type": "commonjs",
+  "homepage": ".",
   "scripts": {
     "dev": "live-server --watch=*.{js,html,css} --open=index.html",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "build": "cp -r *.js *.html *.css sounds/ dist/"
   },
   "jest": {
     "transform": {

@@ -6,6 +6,12 @@ on:
   # Allow manual trigger
   workflow_dispatch:
 
+# Set the permissions
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

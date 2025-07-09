@@ -38,7 +38,7 @@ describe('Game State Management', () => {
     });
 
     test('should load high score from localStorage', () => {
-        localStorage.setItem('snakeHighScore', '100');
+        localStorage.setItem('snakeHighScore', '255');
         gameState.highScore = parseInt(localStorage.getItem('snakeHighScore')) || 0;
         expect(gameState.highScore).toBe(255);
     });

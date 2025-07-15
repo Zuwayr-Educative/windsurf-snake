@@ -57,6 +57,18 @@ class SnakeGame {
                 onload: () => console.log('Game over sound loaded'),
                 onloaderror: (id, err) => console.error('Error loading game over sound:', err)
             }),
+            powerUp: new Howl({
+                src: ['sounds/power-up.mp3'],
+                volume: 0.7,
+                onload: () => console.log('Power-up sound loaded'),
+                onloaderror: (id, err) => console.error('Error loading power-up sound:', err)
+            }),
+            powerDown: new Howl({
+                src: ['sounds/power-down.mp3'],
+                volume: 0.7,
+                onload: () => console.log('Power-down sound loaded'),
+                onloaderror: (id, err) => console.error('Error loading power-down sound:', err)
+            }),
             backgroundMusic: new Howl({
                 src: ['sounds/background-music.mp3'],
                 volume: 0.3,
@@ -116,24 +128,25 @@ class SnakeGame {
     }
     
     spawnFood() {
-        // Create new food at random position
-        const x = Math.floor(Math.random() * this.state.gridSize - this.state.gridSize/2);
-        const z = Math.floor(Math.random() * this.state.gridSize - this.state.gridSize/2);
-        
-        // Make sure food doesn't spawn on snake
-        const foodPos = new THREE.Vector3(x, 0, z);
-        const isOnSnake = this.state.snake.some(segment => 
-            segment.x === foodPos.x && segment.z === foodPos.z
+        const gridSize = gameState.gridSize;
+        const position = new THREE.Vector3(
+            Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2),
+            0,
+            Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2)
         );
-        
-        if (isOnSnake) {
-            // If food would spawn on snake, try again
-            return this.spawnFood();
-        }
-        
-        // Update food position in state
-        this.state.food = { position: foodPos };
+        gameState.food = { position: position };
         graphicsEngine.renderFood();
+    }
+
+    spawnPowerUp() {
+        const gridSize = gameState.gridSize;
+        const position = new THREE.Vector3(
+            Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2),
+            0,
+            Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2)
+        );
+        gameState.powerUp = { position: position };
+        graphicsEngine.updatePowerUp(position);
     }
     
     handleKeyDown(event) {
@@ -191,15 +204,35 @@ class SnakeGame {
         // Add new head
         this.state.snake.unshift(head);
         
+        // Check for power-up collision
+        if (this.state.powerUp && head.x === this.state.powerUp.position.x && head.z === this.state.powerUp.position.z) {
+            // Play power-up sound and activate power-up
+            this.sounds.powerUp.play();
+            this.state.powerUpActive = true;
+            this.state.powerUpEndTime = Date.now() + this.state.powerUpDuration;
+            graphicsEngine.removePowerUp();
+            this.state.powerUp = null;
+        }
+        
         // Check for food collision
         if (this.state.food && head.x === this.state.food.position.x && head.z === this.state.food.position.z) {
-            // Play eat sound and update score
-            this.sounds.eat.play();
-            this.state.score++;
-            document.getElementById('score').textContent = `Score: ${this.state.score}`;
             
             // Spawn new food
+            this.sounds.eat.play();
             this.spawnFood();
+            graphicsEngine.renderFood();
+            
+            // Increment power-up counter and spawn power-up if threshold reached
+            if (++this.state.powerUpCount >= this.state.powerUpThreshold && !this.state.powerUpActive) {
+                this.spawnPowerUp();
+                this.state.powerUpThreshold = Math.floor(Math.random() * 4) + 3;
+                this.state.powerUpCount = 0;
+            }
+            
+            // Double points during power-up
+            const scoreValue = this.state.powerUpActive ? 2 : 1;
+            this.state.score += scoreValue;
+            document.getElementById('score').textContent = `Score: ${this.state.score}`;
             
             // Increase speed slightly (up to a point)
             if (this.state.moveInterval > 100) {
@@ -215,6 +248,14 @@ class SnakeGame {
     }
     
     update(deltaTime) {
+        // Check power-up duration
+        if (this.state.powerUpActive && Date.now() >= this.state.powerUpEndTime) {
+            // Power-up has ended
+            this.state.powerUpActive = false;
+            this.sounds.powerDown.play();
+            console.log('Power-up ended');
+        }
+
         if (this.state.gameOver) {
             return;
         }

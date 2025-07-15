@@ -12,6 +12,7 @@ export class GraphicsEngine {
         this.controls = null;
         this.snakeMeshes = [];
         this.foodMesh = null;
+        this.powerUpMesh = null;
     }
 
     init(containerId) {
@@ -109,17 +110,66 @@ export class GraphicsEngine {
     }
 
     renderFood() {
-        // Remove existing food mesh if it exists
-        if (this.foodMesh) {
-            this.scene.remove(this.foodMesh);
-        }
-        
+        // Update food position if it exists
         if (gameState.food) {
-            const geometry = new THREE.SphereGeometry(0.4, 16, 16);
-            const material = new THREE.MeshPhongMaterial({ color: 0xff4444 });
-            this.foodMesh = new THREE.Mesh(geometry, material);
-            this.foodMesh.position.copy(gameState.food.position);
-            this.scene.add(this.foodMesh);
+            if (this.foodMesh) {
+                this.foodMesh.position.copy(gameState.food.position);
+            } else {
+                this.createFoodMesh(gameState.food.position);
+            }
+        } else {
+            // Remove food mesh if food doesn't exist
+            if (this.foodMesh) {
+                this.scene.remove(this.foodMesh);
+                this.foodMesh = null;
+            }
+        }
+    }
+
+    createFoodMesh(position) {
+        const geometry = new THREE.SphereGeometry(0.45, 32, 32);
+        const material = new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            shininess: 100
+        });
+        this.foodMesh = new THREE.Mesh(geometry, material);
+        this.foodMesh.position.set(position.x, position.y, position.z);
+        this.scene.add(this.foodMesh);
+    }
+
+    updateFood(position) {
+        if (this.foodMesh) {
+            this.foodMesh.position.set(position.x, position.y, position.z);
+        } else {
+            this.createFoodMesh(position);
+        }
+    }
+
+    createPowerUpMesh(position) {
+        const geometry = new THREE.SphereGeometry(0.45, 32, 32);
+        const material = new THREE.MeshPhongMaterial({
+            color: 0x0000ff,
+            shininess: 100,
+            emissive: 0x0000ff,
+            emissiveIntensity: 0.5
+        });
+        this.powerUpMesh = new THREE.Mesh(geometry, material);
+        this.powerUpMesh.position.set(position.x, position.y, position.z);
+        this.scene.add(this.powerUpMesh);
+    }
+
+    updatePowerUp(position) {
+        if (this.powerUpMesh) {
+            this.powerUpMesh.position.set(position.x, position.y, position.z);
+        } else {
+            this.createPowerUpMesh(position);
+        }
+    }
+
+    removePowerUp() {
+        if (this.powerUpMesh) {
+            this.scene.remove(this.powerUpMesh);
+            this.powerUpMesh = null;
         }
     }
 
@@ -130,6 +180,7 @@ export class GraphicsEngine {
     }
 
     render() {
+        this.controls.update();
         this.renderer.render(this.scene, this.camera);
     }
 

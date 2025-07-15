@@ -22,6 +22,13 @@ export const gameState = {
     moveInterval: 200, // ms
     lastMoveTime: 0,
     
+    // Power-up state
+    powerUpActive: false,
+    powerUpDuration: 10000, // 10 seconds in ms
+    powerUpEndTime: 0,
+    powerUpCount: 0,
+    powerUpThreshold: 0,
+    
     // Initialize function to set up Three.js objects
     init: function() {
         this.direction = new THREE.Vector3(1, 0, 0);
@@ -38,6 +45,10 @@ export const gameState = {
         this.gameOver = false;
         this.food = null;
         this.lastMoveTime = 0;
+        this.powerUpActive = false;
+        this.powerUpEndTime = 0;
+        this.powerUpCount = 0;
+        this.powerUpThreshold = Math.floor(Math.random() * 4) + 3; // Random number between 3 and 6
     }
 };
 

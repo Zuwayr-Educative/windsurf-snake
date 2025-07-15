@@ -129,22 +129,38 @@ class SnakeGame {
     
     spawnFood() {
         const gridSize = gameState.gridSize;
-        const position = new THREE.Vector3(
-            Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2),
-            0,
-            Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2)
-        );
+        let position;
+        
+        // Keep trying until we find a position not on the snake
+        do {
+            position = new THREE.Vector3(
+                Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2),
+                0,
+                Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2)
+            );
+        } while (this.state.snake.some(segment => 
+            segment.x === position.x && segment.z === position.z
+        ));
+
         gameState.food = { position: position };
         graphicsEngine.renderFood();
     }
 
     spawnPowerUp() {
         const gridSize = gameState.gridSize;
-        const position = new THREE.Vector3(
-            Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2),
-            0,
-            Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2)
-        );
+        let position;
+        
+        // Keep trying until we find a position not on the snake
+        do {
+            position = new THREE.Vector3(
+                Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2),
+                0,
+                Math.floor(Math.random() * gridSize) - Math.floor(gridSize / 2)
+            );
+        } while (this.state.snake.some(segment => 
+            segment.x === position.x && segment.z === position.z
+        ));
+
         gameState.powerUp = { position: position };
         graphicsEngine.updatePowerUp(position);
     }

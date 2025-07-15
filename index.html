@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="/">
+    <script>
+        // Set base href based on environment
+        const isGitHubPages = window.location.hostname === 'zuwayrwajid.github.io';
+        const baseHref = isGitHubPages ? '/windsurf-snake/' : '/';
+        document.write(`<base href="${baseHref}">`);
+    </script>
     <title>3D Snake Game</title>
     <style>
         body { 

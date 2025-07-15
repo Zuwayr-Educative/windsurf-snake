@@ -2,6 +2,8 @@
 
 A modern implementation of the classic Snake game built with JavaScript.
 
+Demo: https://zuwayr-educative.github.io/windsurf-snake/
+
 ## Project Structure
 
 ### Core Files

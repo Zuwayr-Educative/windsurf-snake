@@ -366,12 +366,153 @@ class SnakeGame {
     }
     
     showGameOver() {
-        console.log('Game over triggered');
-        this.state.gameOver = true;
-        const isNewHighScore = this.updateHighScore();
-        this.finalScoreElement.textContent = this.state.score;
-        this.finalHighScoreElement.textContent = this.state.highScore;
-        this.gameOverlay.classList.add('visible');
+        try {
+            console.log('Game over triggered');
+            this.state.gameOver = true;
+            const isNewHighScore = this.updateHighScore();
+            
+            console.log('Creating game over screen...');
+            
+            // Check if document.body exists
+            if (!document.body) {
+                console.error('document.body is not available');
+                return;
+            }
+            
+            // Create and show the new game over screen
+            const gameOverScreen = document.createElement('div');
+            gameOverScreen.id = 'game-over-screen';
+            
+            // Add some inline styles as a fallback
+            gameOverScreen.style.position = 'fixed';
+            gameOverScreen.style.top = '0';
+            gameOverScreen.style.left = '0';
+            gameOverScreen.style.width = '100%';
+            gameOverScreen.style.height = '100%';
+            gameOverScreen.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            gameOverScreen.style.display = 'flex';
+            gameOverScreen.style.justifyContent = 'center';
+            gameOverScreen.style.alignItems = 'center';
+            gameOverScreen.style.zIndex = '10000';
+            
+            gameOverScreen.innerHTML = `
+                <div class="game-over-container" style="
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 25px;
+                    padding: 40px;
+                    border: 3px solid #e8b450;
+                    background-color: #1a1a1a;
+                    box-shadow: 0 0 15px rgba(232, 180, 80, 0.2);
+                    font-family: 'Press Start 2P', cursive;
+                    max-width: 80%;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    color: #e8b450;
+                ">
+                    <h1 style="
+                        font-size: 4rem;
+                        color: #d95b25;
+                        text-shadow: 5px 5px 0 #6b280d;
+                        margin: 0;
+                    ">Game Over</h1>
+                    <div class="scores" style="
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 15px;
+                        width: 100%;
+                    ">
+                        <p style="margin: 0; font-size: 1.2rem;">Score: ${this.state.score}</p>
+                        <p style="margin: 0; font-size: 1.2rem;">High Score: ${this.state.highScore}</p>
+                    </div>
+                    <div class="form" style="
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 15px;
+                        width: 100%;
+                    ">
+                        <label for="playerName" style="margin: 0; font-size: 1.2rem;">Enter Your Name:</label>
+                        <input type="text" id="playerName" style="
+                            background-color: transparent;
+                            border: 3px solid #68a0a8;
+                            color: #fff;
+                            font-family: 'Press Start 2P', cursive;
+                            padding: 10px;
+                            text-align: center;
+                            width: 80%;
+                            font-size: 1rem;
+                        ">
+                    </div>
+                    <div class="buttons" style="
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: center;
+                        gap: 20px;
+                        margin-top: 10px;
+                        width: 100%;
+                    ">
+                        <button class="btn btn-submit" id="submit-score" style="
+                            background-color: transparent;
+                            font-family: 'Press Start 2P', cursive;
+                            padding: 15px 25px;
+                            border: 3px solid #68a0a8;
+                            color: #68a0a8;
+                            cursor: pointer;
+                            font-size: 1rem;
+                            text-transform: uppercase;
+                        ">Submit</button>
+                        <button class="btn btn-restart" id="restart-button" style="
+                            background-color: transparent;
+                            font-family: 'Press Start 2P', cursive;
+                            padding: 15px 25px;
+                            border: 3px solid #d95b25;
+                            color: #d95b25;
+                            cursor: pointer;
+                            font-size: 1rem;
+                            text-transform: uppercase;
+                        ">Restart</button>
+                    </div>
+                </div>
+            `;
+            
+            console.log('Game over screen HTML created');
+            
+            // Add the game over screen to the DOM
+            document.body.appendChild(gameOverScreen);
+            console.log('Game over screen added to DOM');
+            
+            // Debug: Check if styles are applied
+            const container = document.querySelector('.game-over-container');
+            if (container) {
+                console.log('Game over container found, checking styles...');
+                const styles = window.getComputedStyle(container);
+                console.log('Game over container styles:', {
+                    display: styles.display,
+                    position: styles.position,
+                    visibility: styles.visibility,
+                    opacity: styles.opacity,
+                    zIndex: styles.zIndex
+                });
+            } else {
+                console.error('Game over container not found in DOM');
+            }
+            
+            // Use event delegation for button clicks
+            document.body.addEventListener('click', (event) => {
+                if (event.target.id === 'submit-score') {
+                    this.submitScore();
+                } else if (event.target.id === 'restart-button') {
+                    this.resetGame();
+                }
+            });
+            
+        } catch (error) {
+            console.error('Error in showGameOver:', error);
+        }
         
         // Play game over sound
         try {
@@ -393,17 +534,23 @@ class SnakeGame {
     }
     
     resetGame() {
+        // Remove any existing game over screen and test indicator
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const testIndicator = document.querySelector('body::after');
+        
+        if (gameOverScreen) {
+            gameOverScreen.remove();
+        }
+        
+        if (testIndicator) {
+            testIndicator.remove();
+        }
+        
         // Reset game state using the state object's reset method
         this.state.reset();
         this.state.highScore = this.loadHighScore();
         document.getElementById('score').textContent = 'Score: 0';
         document.getElementById('high-score').textContent = `High Score: ${this.state.highScore}`;
-        this.gameOverlay.classList.remove('visible');
-        
-        // Reset score submission form
-        document.getElementById('player-name').value = '';
-        document.getElementById('score-message').textContent = '';
-        document.getElementById('submit-score').disabled = false;
         
         // Reset background music volume and try to play again
         if (this.sounds && this.sounds.backgroundMusic) {
@@ -421,6 +568,11 @@ class SnakeGame {
         // Reset camera position
         graphicsEngine.camera.position.set(0, 30, 30);
         graphicsEngine.controls.reset();
+        
+        // Make sure the game is not paused
+        if (this.state.paused) {
+            this.togglePause();
+        }
     }
     
 

@@ -99,7 +99,15 @@ export class GraphicsEngine {
         );
         
         gameState.snake.forEach((segment, index) => {
-            const color = index === 0 ? 0x00ff00 : 0x44aa88; // Head is green, body is teal
+            // Change colors based on powerup state
+            let color;
+            if (gameState.powerUpActive) {
+                // Yellow colors when powerup is active
+                color = index === 0 ? 0xffff00 : 0xffdd00; // Head is bright yellow, body is darker yellow
+            } else {
+                // Original colors when powerup is not active
+                color = index === 0 ? 0x00ff00 : 0x44aa88; // Head is green, body is teal
+            }
             const material = new THREE.MeshPhongMaterial({ color });
             const cube = new THREE.Mesh(geometry, material);
             cube.position.copy(segment);
